@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MultiAI Office — Professional Game Mode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700&display=swap');
+
+    :root {
+      --bg-deep: #070b14;
+      --bg-panel: #0c1220;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.45);
+      --success: #10b981;
+      --warn: #f59e0b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-deep);
+      color: #e2e8f0;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .font-game { font-family: 'Orbitron', sans-serif; }
+
+    /* Glass panels */
+    .glass {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(12, 18, 32, 0.95));
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(99, 102, 241, 0.12);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    /* ========== OFFICE STAGE ========== */
+    .office-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+        linear-gradient(180deg, #0a0f1a 0%, #0f172a 35%, #0a0f1a 100%);
+    }
+
+    /* Floor grid with perspective feel */
+    .floor-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(71, 85, 105, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(71, 85, 105, 0.08) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 100%);
+    }
+
+    /* Ambient light orbs */
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    /* ========== DESK + AGENT ========== */
+    .desk-unit {
+      position: absolute;
+      width: 128px;
+      height: 110px;
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+      z-index: 10;
+    }
+    .desk-unit:hover { transform: translateY(-6px) scale(1.04); z-index: 30; }
+    .desk-unit.active { z-index: 25; }
+    .desk-unit.working { z-index: 20; }
+
+    .desk-base {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 108px;
+      height: 58px;
+      background: linear-gradient(160deg, #3b4659 0%, #1e293b 60%, #0f172a 100%);
+      border-radius: 10px 10px 6px 6px;
+      border: 1.5px solid rgba(148, 163, 184, 0.25);
+      box-shadow:
+        0 10px 0 #0b1220,
+        0 14px 28px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .desk-unit.active .desk-base {
+      border-color: rgba(99, 102, 241, 0.7);
+      box-shadow:
+        0 10px 0 #0b1220,
+        0 0 32px var(--accent-glow),
+        0 14px 28px rgba(0,0,0,0.55);
+    }
+    .desk-unit.working .desk-base {
+      border-color: rgba(16, 185, 129, 0.7);
+      box-shadow:
+        0 10px 0 #0b1220,
+        0 0 28px rgba(16, 185, 129, 0.45),
+        0 14px 28px rgba(0,0,0,0.55);
+      animation: desk-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes desk-pulse {
+      0%, 100% { box-shadow: 0 10px 0 #0b1220, 0 0 20px rgba(16,185,129,0.3), 0 14px 28px rgba(0,0,0,0.55); }
+      50% { box-shadow: 0 10px 0 #0b1220, 0 0 36px rgba(16,185,129,0.55), 0 14px 28px rgba(0,0,0,0.55); }
+    }
+
+    /* Monitor */
+    .desk-monitor {
+      position: absolute;
+      bottom: 52px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 56px;
+      height: 40px;
+      background: #020617;
+      border: 2.5px solid #64748b;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .desk-monitor-screen {
+      position: absolute;
+      inset: 4px;
+      background: linear-gradient(160deg, #1e1b4b, #0f172a);
+      border-radius: 2px;
+    }
+    .desk-unit.working .desk-monitor-screen {
+      background: linear-gradient(180deg, #059669 0%, #064e3b 40%, #020617 40%);
+      animation: code-scroll 0.7s steps(5) infinite;
+    }
+    @keyframes code-scroll {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 16px; }
+    }
+    .desk-monitor-stand {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 10px;
+      background: #475569;
+      border-radius: 0 0 3px 3px;
+    }
+
+    /* Agent character */
+    .agent-char {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      border-radius: 50%;
+      border: 3px solid;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+      transition: all 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+      z-index: 5;
+      background: rgba(15, 23, 42, 0.85);
+    }
+    .desk-unit.working .agent-char {
+      animation: work-bounce 0.55s ease-in-out infinite;
+    }
+    @keyframes work-bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-5px); }
+    }
+    .desk-unit.done .agent-char {
+      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));
+    }
+
+    /* Speech bubble */
+    .speech {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.85);
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 7px 12px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      max-width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+      z-index: 40;
+    }
+    .speech.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1) translateY(-2px);
+    }
+    .speech::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -6px;
+      border: 6px solid transparent;
+      border-top-color: #f8fafc;
+    }
+
+    /* Name tag */
+    .name-tag {
+      position: absolute;
+      bottom: -18px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 10px;
+      font-weig
