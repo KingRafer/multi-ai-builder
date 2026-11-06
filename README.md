@@ -1,110 +1,37 @@
-# MultiAI Builder v2 — Full-Stack Edition
+# MultiAI Office v3 PRO — Professional Game Mode
 
-**Aplikasi Web Multi-AI** untuk membuat website & aplikasi profesional lengkap dengan:
+Lanjutan dari [multi-ai-builder](https://github.com/KingRafer/multi-ai-builder)
 
-- Multi-Agent AI (Planner → Designer → Developer → Reviewer)
-- **Backend** (Express + SQLite)
-- **Database** (Supabase / Prisma / SQLite)
-- **Deploy ke Vercel** (ZIP siap pakai)
+Aplikasi web multi-AI untuk membuat website & aplikasi profesional dengan **tampilan kantor raksasa game profesional**.
 
----
+## Fitur Visual Game
 
-## Fitur Baru (v2)
-
-| Fitur | Keterangan |
-|-------|------------|
-| **Full-Stack Mode** | Generate Next.js + API routes |
-| **Database** | Pilih Supabase, Prisma+PostgreSQL, atau SQLite |
-| **Save Projects** | Simpan ke SQLite (backend) atau localStorage |
-| **Export ZIP** | Download project lengkap |
-| **Deploy Vercel** | Generate struktur Next.js siap deploy + `.env.example` |
-| **BYOK** | Grok, OpenAI, Claude, Gemini, OpenRouter |
-
----
+- 🏢 **Virtual Office Floor** polished — floor grid, ambient light orbs, particles
+- 🪑 **Desk unit profesional** — monitor animasi, status ring, glow saat working
+- 👤 **Agent characters** — bounce animation, speech bubble, XP popup, level up
+- 📊 **Phase chips** — Plan → Design → Code → Review → QA dengan status live
+- ⚡ **Energy system** + progress bar saat generate
+- 🎮 **Mode Office / Classic** switch
+- 🧠 Multi-agent: Nova, Luna, Kai, Rex, Aria
+- 🖥️ Live Preview + Monaco Editor
+- 📦 Export ZIP, Save, Deploy Vercel
+- 🔑 BYOK + Mode Demo
 
 ## Cara Menjalankan
 
-### 1. Frontend saja (cepat)
-
 ```bash
 cd multi-ai-builder
-# Buka index.html di browser
-# atau
 npx serve .
+# atau buka index.html langsung
 ```
 
-### 2. Full (Backend + Database)
+## Alur Kerja
 
-```bash
-cd multi-ai-builder
-npm install
-npm run dev
-# Buka http://localhost:3000
-```
+1. Tulis **Briefing** sebagai CEO
+2. Pilih Framework + Style + Full-Stack (opsional)
+3. Klik **Mulai Kerja Kantor**
+4. Lihat agen bekerja di office floor (animasi, bubble, XP)
+5. Switch ke **Classic** untuk Preview & Code
+6. Save / ZIP / Deploy
 
-Backend akan:
-- Menyimpan project di `data/projects.db` (SQLite)
-- Menyediakan API `/api/projects` dan `/api/export-vercel`
-
-### 3. Deploy Builder sendiri ke Vercel
-
-```bash
-npx vercel
-```
-
-Atau push ke GitHub lalu import di vercel.com.
-
----
-
-## Cara Pakai Aplikasi
-
-1. Tulis deskripsi website/aplikasi
-2. (Opsional) Centang **Full-Stack Mode** → pilih Database
-3. Klik **Generate dengan Multi-AI**
-4. Lihat Live Preview + Code (HTML / CSS / JS / API / DB)
-5. **Save** project, **ZIP**, atau **Deploy Vercel**
-
-### Deploy hasil generate ke Vercel
-
-1. Klik tombol **Deploy Vercel**
-2. Download **Vercel ZIP**
-3. Extract → `npm install` → isi `.env.local`
-4. `npx vercel --prod`  
-   atau push ke GitHub & import di Vercel
-
----
-
-## Struktur Project
-
-```
-multi-ai-builder/
-├── index.html          # UI utama
-├── app.js              # Multi-agent logic + demo + export
-├── server.js           # Express backend + SQLite + Vercel export API
-├── package.json
-├── vercel.json         # Konfigurasi deploy builder
-├── data/               # SQLite database (auto-created)
-└── README.md
-```
-
----
-
-## Environment (untuk hasil generate)
-
-Jika generate dengan Supabase:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
-```
-
-Jika Prisma:
-
-```
-DATABASE_URL=postgresql://...
-```
-
----
-
-Dibuat untuk Anda • MultiAI Builder v2
+Dibuat untuk Anda • MultiAI Office v3 PRO
