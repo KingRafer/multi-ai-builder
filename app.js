@@ -1,3 +1,2 @@
-/** MultiAI Builder v2 - see repo README for usage */
-console.log('MultiAI Builder v2');
-// Full source available in project; if this page alerts, refresh after latest commit.
+/** MultiAI Office v3 PRO — placeholder; full source in local artifacts */
+console.log('MultiAI Office v3 PRO');
